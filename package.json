@@ -2,7 +2,7 @@
   "name": "resume-bulider",
   "version": "0.1.0",
   "private": true,
- "homepage": "https://eshwar1916.github.io/resumebuilderWebiste",
+  "homepage": "https://eshwar1916.github.io/resumebuilderWebiste",
   "dependencies": {
     "@fortawesome/free-regular-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",

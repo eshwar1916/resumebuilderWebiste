@@ -5,7 +5,7 @@ import { Document, Packer, Paragraph, TextRun } from 'docx';
 import { saveAs } from 'file-saver';
 import './Resume_temp.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilePdf, faFileWord, faFileAlt, faEye } from '@fortawesome/free-regular-svg-icons';
+import { faFilePdf, faFileWord, faFileAlt, faEye ,fadownload } from '@fortawesome/free-regular-svg-icons';
 
 const ResumeTemplates = () => {
     const location = useLocation();
@@ -197,13 +197,13 @@ const ResumeTemplates = () => {
                         </button>
                         <button onClick={() => handleDownload('word')} aria-label="Download Word">
                             <FontAwesomeIcon icon={faFileWord} bounce style={{ color: "#0e76a8", marginRight: '5px' }} />
-                            Word
+                           WORD
                         </button>
                         <button onClick={() => handleDownload('gdoc')} aria-label="Download Google Docs">
                             <FontAwesomeIcon icon={faFileAlt} bounce style={{ color: "#db4437", marginRight: '5px' }} />
-                            Docs
+                            DOCS
                         </button>
-                        <button className="close-btn" onClick={() => setDialogVisible(false)}>Close</button>
+                        <button className="close-btn" onClick={() => setDialogVisible(false)}>CLOSE</button>
                     </div>
                 </div>
             )}

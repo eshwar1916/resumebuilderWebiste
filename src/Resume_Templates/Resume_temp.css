@@ -12,7 +12,12 @@ body {
   background-color: #ffffff52;
   border-radius: 15px;
   box-shadow: 6px 6px 98px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 3s ease-in-out;
+     /* Initially hidden */
 
+}
+.template-wrapper.visible {
+  opacity: 0; /* Fully visible when the class is added */
 }
 
 .template-container {  
@@ -160,20 +165,23 @@ body {
   }
   
   .dialog-box button {
-        background-color: transparent; 
-        color: #000000;
-        border: none;
-        padding: 10px 15px;
-        margin: 10px;
-        cursor: pointer;
+    border-radius: 1rem;
+    background-color: #0cb3b72b;
+    border: none;
+    color: #000000;
+    cursor: pointer;
+    margin: 10px;
+    padding: 10px 15px;
+    font-size: medium;
   }
   
   .dialog-box .close-btn {
-    background-color: #f44336;
+    background-color: #9a0b00;
+    color: white;
   }
   
   .dialog-box .close-btn:hover {
-    background-color: #d32f2f;
+    background-color: #9a0b00;
   }
   @media (max-width: 768px) {
     .template1, .template2, .template3 {

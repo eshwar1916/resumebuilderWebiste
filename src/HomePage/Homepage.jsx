@@ -23,9 +23,12 @@ function HomePage() {
                 <nav>
                     <div className="logo">Resume Craft</div>
                     <div className={`menu ${menuOpen ? 'active' : ''}`}>
-                        <a href="#import-linkedin" className="menu-item">
-                            <FaLinkedin /> Import from LinkedIn
-                        </a>
+                    <a 
+        href="https://www.linkedin.com" // Replace with the actual LinkedIn page or profile link
+        target="_blank" // Opens the link in a new tab
+        rel="noopener noreferrer" // Security best practice
+        className="menu-item"
+    ></a>
                         <a href="#view-templates" className="menu-item">
                             <FaFileAlt /> View Templates
                         </a>

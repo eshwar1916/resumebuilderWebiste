@@ -5,6 +5,25 @@ import './ResumeBuilder.css';
 const ResumeBuilder = () => {
   const navigate = useNavigate();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [isFormVisible, setIsFormVisible] = useState(true);
+
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    projects: '',
+    hobbies: '',
+    summary: '',
+  });
+
+  const [skills, setSkills] = useState([]); 
+  const [currentSkill, setCurrentSkill] = useState('');
+  const [educationList, setEducationList] = useState([{ college: '', branch: '', cgpa: '' }]);
+  const [experienceList, setExperienceList] = useState([{ company: '', domain: '', years: '' }]);
+
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -13,27 +32,67 @@ const ResumeBuilder = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    specializations: '',
-    projects: '',
-    hobbies: '',
-    summary: '',
-  });
+  const validateField = (name, value) => {
+    switch (name) {
+      case 'firstName':
+        return value.trim() ? '' : 'First name is required';
+      case 'lastName':
+        return value.trim() ? '' : 'Last name is required';
+      case 'email':
+        if (!value.trim()) return 'Email is required';
+        if (!/\S+@\S+\.\S+/.test(value)) return 'Email is invalid';
+        return '';
+      case 'phone':
+        if (!value.trim()) return 'Phone number is required';
+        if (!/^\d+$/.test(value)) return 'Phone number must contain only digits';
+        return '';
+      case 'projects':
+        return value.trim() ? '' : 'Projects field is required';
+      case 'hobbies':
+        return value.trim() ? '' : 'Hobbies field is required';
+      case 'summary':
+        return value.trim() ? '' : 'Summary field is required';
+      default:
+        return '';
+    }
+  };
+  
 
-  // State for handling skills
-  const [skills, setSkills] = useState([]); 
-  const [currentSkill, setCurrentSkill] = useState('');
-
-  // State for handling education entries
-  const [educationList, setEducationList] = useState([{ education: '', percentage: '' }]);
+  const validateForm = () => {
+    const newErrors = {};
+    Object.keys(formData).forEach((key) => {
+      newErrors[key] = validateField(key, formData[key]);
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).every((error) => !error);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
+    if (touched[name]) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: validateField(name, value),
+      }));
+    }
+  };
+
+  const handleInputBlur = (name) => {
+    setTouched((prev) => ({ ...prev, [name]: true }));
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: validateField(name, formData[name]),
+    }));
+  };
+
+  const handleInputKeyUp = (name) => {
+    if (touched[name]) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: validateField(name, formData[name]),
+      }));
+    }
   };
 
   const handleSkillInput = (e) => {
@@ -60,12 +119,28 @@ const ResumeBuilder = () => {
   };
 
   const handleAddEducation = () => {
-    setEducationList([...educationList, { education: '', percentage: '' }]);
+    setEducationList([...educationList, { college: '', branch: '', cgpa: '' }]);
   };
 
   const handleRemoveEducation = (index) => {
     const updatedEducationList = educationList.filter((_, eduIndex) => eduIndex !== index);
     setEducationList(updatedEducationList);
+  };
+
+  const handleExperienceChange = (index, e) => {
+    const { name, value } = e.target;
+    const updatedExperienceList = [...experienceList];
+    updatedExperienceList[index][name] = value;
+    setExperienceList(updatedExperienceList);
+  };
+
+  const handleAddExperience = () => {
+    setExperienceList([...experienceList, { company: '', domain: '', years: '' }]);
+  };
+
+  const handleRemoveExperience = (index) => {
+    const updatedExperienceList = experienceList.filter((_, expIndex) => expIndex !== index);
+    setExperienceList(updatedExperienceList);
   };
 
   const handleReset = () => {
@@ -74,18 +149,27 @@ const ResumeBuilder = () => {
       lastName: '',
       email: '',
       phone: '',
-      specializations: '',
       projects: '',
       hobbies: '',
       summary: '',
     });
     setSkills([]);
-    setEducationList([{ education: '', percentage: '' }]);
+    setEducationList([{ college: '', branch: '', cgpa: '' }]);
+    setExperienceList([{ company: '', domain: '', years: '' }]);
+    setErrors({});
+    setTouched({});
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate('/resume-templates', { state: { ...formData, skills, educationList } });
+      const outputData = {
+        ...formData,
+        skills,
+        educationList,
+        experienceList,
+      };
+      console.log(JSON.stringify(outputData)); // Output JSON format to console
+      navigate('/resume-templates', { state: outputData });
   };
 
   const imageContainerStyle = {
@@ -98,10 +182,12 @@ const ResumeBuilder = () => {
     backgroundPosition: 'center'
   };
 
+  const isFormValid = Object.keys(errors).every((error) => !error) && Object.values(formData).every(field => field.trim() !== '');
+
   return (
-    <><div className="beside">
+    <div className="beside">
       <div className="resume-builder">
-        <div className="form-container">
+        <div className={`form-container ${isFormVisible ? 'show' : ''}`}>
           <h1>Build Your Resume</h1>
           <form className="scrolllist content-height" >
             <div className="form-row">
@@ -112,7 +198,10 @@ const ResumeBuilder = () => {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleInputChange}
+                  onBlur={() => handleInputBlur('firstName')}
+                  onKeyUp={() => handleInputKeyUp('firstName')}
                   required />
+                {errors.firstName && <p className="error">{errors.firstName}</p>}
               </div>
               <div className="form-column">
                 <label>Last Name</label>
@@ -121,7 +210,10 @@ const ResumeBuilder = () => {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleInputChange}
+                  onBlur={() => handleInputBlur('lastName')}
+                  onKeyUp={() => handleInputKeyUp('lastName')}
                   required />
+                {errors.lastName && <p className="error">{errors.lastName}</p>}
               </div>
             </div>
 
@@ -133,7 +225,10 @@ const ResumeBuilder = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
+                  onBlur={() => handleInputBlur('email')}
+                  onKeyUp={() => handleInputKeyUp('email')}
                   required />
+                {errors.email && <p className="error">{errors.email}</p>}
               </div>
               <div className="form-column">
                 <label>Phone</label>
@@ -142,7 +237,10 @@ const ResumeBuilder = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
+                  onBlur={() => handleInputBlur('phone')}
+                  onKeyUp={() => handleInputKeyUp('phone')}
                   required />
+                {errors.phone && <p className="error">{errors.phone}</p>}
               </div>
             </div>
 
@@ -172,18 +270,32 @@ const ResumeBuilder = () => {
                 <div key={index} className="form-row education-row">
                   <input
                     type="text"
-                    name="education"
-                    value={edu.education}
+                    name="college"
+                    value={edu.college}
                     onChange={(e) => handleEducationChange(index, e)}
-                    placeholder="Education (e.g., B.Sc Computer Science)"
+                    onBlur={() => handleInputBlur(`education-${index}`)}
+                    onKeyUp={() => handleInputKeyUp(`education-${index}`)}
+                    placeholder="College Name"
                     required
                   />
                   <input
                     type="text"
-                    name="percentage"
-                    value={edu.percentage}
+                    name="branch"
+                    value={edu.branch}
                     onChange={(e) => handleEducationChange(index, e)}
-                    placeholder="Percentage/Grade"
+                    onBlur={() => handleInputBlur(`education-${index}`)}
+                    onKeyUp={() => handleInputKeyUp(`education-${index}`)}
+                    placeholder="Branch"
+                    required
+                  />
+                  <input
+                    type="text"
+                    name="cgpa"
+                    value={edu.cgpa}
+                    onChange={(e) => handleEducationChange(index, e)}
+                    onBlur={() => handleInputBlur(`education-${index}`)}
+                    onKeyUp={() => handleInputKeyUp(`education-${index}`)}
+                    placeholder="CGPA/Percentage"
                     required
                   />
                   {educationList.length > 1 && (
@@ -193,57 +305,110 @@ const ResumeBuilder = () => {
                   )}
                 </div>
               ))}
-              <button type="button" style={{backgroundcolor: '#930000b0', height: '5rem',}} onClick={handleAddEducation}>Add Education</button>
+              <button
+                type="button"
+                onClick={handleAddEducation}
+                style={{ display: 'block', margin: '1rem auto' }}>
+                Add Education
+              </button>
+            </div>
+
+            {/* Experience Section */}
+            <div className="form-row">
+              <label>Experience</label>
+              {experienceList.map((exp, index) => (
+                <div key={index} className="form-row experience-row">
+                  <input
+                    type="text"
+                    name="company"
+                    value={exp.company}
+                    onChange={(e) => handleExperienceChange(index, e)}
+                    onBlur={() => handleInputBlur(`experience-${index}`)}
+                    onKeyUp={() => handleInputKeyUp(`experience-${index}`)}
+                    placeholder="Company Name"
+                    required
+                  />
+                  <input
+                    type="text"
+                    name="domain"
+                    value={exp.domain}
+                    onChange={(e) => handleExperienceChange(index, e)}
+                    onBlur={() => handleInputBlur(`experience-${index}`)}
+                    onKeyUp={() => handleInputKeyUp(`experience-${index}`)}
+                    placeholder="Domain"
+                    required
+                  />
+                  <input
+                    type="text"
+                    name="years"
+                    value={exp.years}
+                    onChange={(e) => handleExperienceChange(index, e)}
+                    onBlur={() => handleInputBlur(`experience-${index}`)}
+                    onKeyUp={() => handleInputKeyUp(`experience-${index}`)}
+                    placeholder="Years of Experience"
+                    required
+                  />
+                  {experienceList.length > 1 && (
+                    <button type="button" onClick={() => handleRemoveExperience(index)}>
+                      Remove
+                    </button>
+                  )}
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={handleAddExperience}
+                style={{ display: 'block', margin: '1rem auto' }}>
+                Add Experience
+              </button>
             </div>
 
             <div className="form-row">
-              <div className="form-column">
-                <label>Specializations</label>
-                <textarea
-                  name="specializations"
-                  value={formData.specializations}
-                  onChange={handleInputChange}
-                  required />
-              </div>
               <div className="form-column">
                 <label>Projects</label>
                 <textarea
                   name="projects"
                   value={formData.projects}
                   onChange={handleInputChange}
+                  onBlur={() => handleInputBlur('projects')}
+                  onKeyUp={() => handleInputKeyUp('projects')}
                   required />
+                {errors.projects && <p className="error">{errors.projects}</p>}
               </div>
-            </div>
-
-            <div className="form-row">
               <div className="form-column">
                 <label>Hobbies</label>
                 <textarea
                   name="hobbies"
                   value={formData.hobbies}
                   onChange={handleInputChange}
+                  onBlur={() => handleInputBlur('hobbies')}
+                  onKeyUp={() => handleInputKeyUp('hobbies')}
                   required />
-              </div>
-              <div className="form-column">
-                <label>Summary</label>
-                <textarea
-                  name="summary"
-                  value={formData.summary}
-                  onChange={handleInputChange}
-                  required />
+                {errors.hobbies && <p className="error">{errors.hobbies}</p>}
               </div>
             </div>
 
-          </form>
-            <div className="form-buttons">
-              <button type="submit" onClick={handleSubmit}>Submit</button>
-              <button type="button" onClick={handleReset}>Reset</button>
-              <button type="button" onClick={() => navigate('/')}>Cancel</button>
+            <div className="form-row">
+              <label>Summary</label>
+              <textarea
+                name="summary"
+                value={formData.summary}
+                onChange={handleInputChange}
+                onBlur={() => handleInputBlur('summary')}
+                onKeyUp={() => handleInputKeyUp('summary')}
+                required />
+              {errors.summary && <p className="error">{errors.summary}</p>}
             </div>
+
+            <div className="form-actions" style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <button type="submit" onClick={handleSubmit} >Generate Resume</button>
+              <button type="button" onClick={handleReset}>Reset</button>
+            </div>
+          </form>
         </div>
+        <div className="image-container" style={imageContainerStyle}></div>
       </div>
-      <div style={imageContainerStyle}></div>
-    </div></>
+    </div>
   );
 };
 

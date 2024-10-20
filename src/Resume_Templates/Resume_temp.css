@@ -1,27 +1,45 @@
+body {
+  background: linear-gradient(to right, #7c8186, #274244);
+  background-size: cover;
+  font-family: Arial, sans-serif;
+}
+.template-wrapper {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 80%;
+  padding: 20px;
+  background-color: #ffffff52;
+  border-radius: 15px;
+  box-shadow: 6px 6px 98px rgba(0, 0, 0, 0.1);
+
+}
+
 .template-container {  
-    display: flex;  
-    flex-direction: row;  
-    justify-content: space-between;  
-    align-items: center;  
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12rem;
   }  
   .resume-container{
     position: relative;
     top: 6rem;
-
+    display: flex;
+    justify-content: center;
   }
     
   .template1, .template2, .template3 {  
-    width: 25%;
+    
     height: 33rem;
     position: relative;
-
     margin: 5px;
     padding: 12px;
     background-color: #fdfdfd;
     border: 1px solid #ddd;
-    font-size: 7px;
+    font-size: 11px;
     box-shadow: rgb(31 85 255 / 40%) 0px 2px 4px, rgb(211 211 211 / 30%) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
-
+    width: 18rem;
   }  
     
   .template1 .left-sidebar {  
@@ -35,7 +53,7 @@
     position: relative;
     right: 0.7rem;
     height: 34.5rem;
-    bottom: 2.9rem;
+    bottom: 3.6rem;
   }  
     
   .template1 .left-sidebar img {  
@@ -46,7 +64,7 @@
   }  
     
   .template1 .main-content {  
-    width: 60%;  
+    width: 50%;  
     float: right;  
     padding: 5px;  
   }  

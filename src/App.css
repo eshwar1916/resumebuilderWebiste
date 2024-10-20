@@ -1,7 +1,9 @@
 .App {
   text-align: center;
 }
-
+.body{
+  background: linear-gradient(to right, #7c8186, #274244);
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Homepage.css';
 import { useNavigate } from 'react-router-dom';
 import { FaLinkedin, FaFileAlt, FaInfoCircle, FaDownload } from 'react-icons/fa'; // Import icons
-
+import ReactParticles from '../Reactparticle';
 function HomePage() {
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
@@ -17,11 +17,11 @@ function HomePage() {
     };
 
     return (
-        <div className="homepage">
+        <><ReactParticles /><div className="homepage">
             {/* Header Section */}
             <header>
                 <nav>
-                    <div className="logo">FutureReady Resume</div>
+                    <div className="logo">Resume Craft</div>
                     <div className={`menu ${menuOpen ? 'active' : ''}`}>
                         <a href="#import-linkedin" className="menu-item">
                             <FaLinkedin /> Import from LinkedIn
@@ -48,11 +48,11 @@ function HomePage() {
                     <div className="content-box">
                         <h1>Craft Your Dream Career</h1>
                         <p>A simplified way to build a professional resume and prepare for your future.</p>
-                        <a href="#build" className="cta-btn"  onClick={handleSubmit}>BUILD YOUR RESUME</a>
+                        <a href="#build" className="cta-btn" onClick={handleSubmit}>BUILD YOUR RESUME</a>
                     </div>
                 </div>
             </section>
-        </div>
+        </div></>
     );
 }
 

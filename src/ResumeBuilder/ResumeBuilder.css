@@ -2,10 +2,27 @@
   position: relative;
   top: 1rem;
 } 
+.form-container {
+  position: relative;
+  transform: translateX(100vw); /* Start off-screen to the right */
+  opacity: 0;
+  transition: transform 1s ease-out, opacity 1s ease-out;
+}
+.error {
+  color: red;
+  font-size: 0.9rem;
+}
+
+
+/* Animation class when the form is in view */
+.form-container.show {
+  transform: translateX(0); /* End at the center */
+  opacity: 1;
+}
 .beside{
   display: flex;
   justify-content: space-evenly;
-  background: #8aa8ff8a;
+  background: linear-gradient(to right, #7c8186, #274244);
   height: 54rem;
   overflow:hidden
 }
